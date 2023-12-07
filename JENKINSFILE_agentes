@@ -1,0 +1,78 @@
+pipeline{
+    agent none
+    stages{
+        stage('Get Code'){
+            agent any
+            steps{
+                script{
+                    //se obtiene el codigo del repo
+                    git 'https://github.com/starlord450/Ejercicio_1'
+                    stash name: 'codigoRepo', includes: '**/*' 
+                }
+            }
+        }
+        stage('Build'){
+            agent{label 'principal'}
+            steps{
+               script{
+                    unstash 'codigoRepo'
+                    echo 'Esto no es python, no hay que compilar nada!!'
+                    echo WORKSPACE
+                    sh 'whoami'
+                    sh 'whoami'
+                    
+               }
+            }
+        }
+        stage('Unit'){
+            agent{label 'esclavo-1'}
+            steps{
+                script{
+                    unstash 'codigoRepo'
+                    catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE'){
+                    bat '''
+                        set PYTHONPATH=%WORKSPACE%
+                        "C:\\Users\\Jorge\\AppData\\Local\\Programs\\Python\\Python312\\Scripts\\pytest" --junitxml=result-unit.xml test\\unit
+                        echo WORKSPACE
+                        echo WORKSPACE
+                        hostname
+                        hostname
+                    '''
+                    } 
+                }   
+            }
+        }
+        stage('Rest'){
+            agent{label 'esclavo-2'}
+            steps{
+                script{
+                    unstash 'codigoRepo'
+                    catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE'){
+                        bat '''
+                            set PYTHONPATH=%WORKSPACE%
+                            set FLASK_APP=app\\api.py
+                            set FLASK_ENV=development
+                            start "C:\\Users\\Jorge\\AppData\\Local\\Programs\\Python\\Python312\\python.exe" flask run
+                            start java -jar C:\\Users\\Jorge\\wiremock\\wiremock-standalone-3.3.1.jar --port 9090 --root-dir C:\\Users\\Jorge\\wiremock
+                            "C:\\Users\\Jorge\\AppData\\Local\\Programs\\Python\\Python312\\Scripts\\pytest" --junitxml=result-rest.xml test\\rest
+                            echo WORKSPACE
+                            echo WORKSPACE
+                            hostname
+                            hostname
+                        '''
+                        }
+                    }    
+                }
+            }
+            
+        stage('Results'){
+            agent any
+            steps{
+                script{
+                    unstash 'codigoRepo'
+                    junit 'result*.xml'
+                }
+            }
+        }
+    }
+}

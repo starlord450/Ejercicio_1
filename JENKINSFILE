@@ -4,12 +4,12 @@ pipeline{
         stage('Get Code'){
             steps{
                 //se obtiene el codigo del repo
-                git 'https://github.com/starlord450/helloworld'
+                git 'https://github.com/starlord450/Ejercicio_1'
             }
         }
         stage('Build'){
             steps{
-                echo 'Esto no es python, no hay que compilar nada!!'
+                echo 'Esto no es python, no hay que compilar nada!!!'
                 echo WORKSPACE
                 bat 'dir'
             }
