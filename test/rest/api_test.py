@@ -2,13 +2,12 @@ import http.client
 import os
 import unittest
 from urllib.request import urlopen
-import time  # Añade la importación de 'time'
 
 import pytest
 
 BASE_URL = "http://localhost:5000"
 BASE_URL_MOCK = "http://localhost:9090"
-DEFAULT_TIMEOUT = [10]  # in secs
+DEFAULT_TIMEOUT = 10  # in secs
 
 @pytest.mark.api
 class TestApi(unittest.TestCase):
@@ -17,19 +16,8 @@ class TestApi(unittest.TestCase):
         self.assertTrue(len(BASE_URL) > 8, "URL no configurada")
 
     def test_api_add(self):
-        global DEFAULT_TIMEOU
         url = f"{BASE_URL}/calc/add/1/2"
-
-        start_time = time.time()
         response = urlopen(url, timeout=DEFAULT_TIMEOUT)
-        end_time = time.time()
-
-        elapsed_time = end_time - start_time
-        print(f"La solicitud tomó {elapsed_time} segundos")
-
-        # Ajusta el DEFAULT_TIMEOUT basado en el tiempo de ejecución
-        DEFAULT_TIMEOUT = elapsed_time + 2  # Añade un margen adicional (ajusta según sea necesario)
-
         self.assertEqual(
             response.status, http.client.OK, f"Error en la petición API a {url}"
         )
