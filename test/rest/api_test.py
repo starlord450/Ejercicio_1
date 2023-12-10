@@ -45,7 +45,15 @@ class TestApi(unittest.TestCase):
             response.read().decode(), "2", "ERROR MULTIPLY"
         )
 
-
+    def test_api_divide(self):
+        url = f"{BASE_URL}/calc/divide/4/2"
+        response = urlopen(url, timeout=DEFAULT_TIMEOUT)
+        self.assertEqual(
+            response.status, http.client.OK, f"Error en la petición API a {url}"
+        )
+        self.assertEqual(
+            response.read().decode(), "2", "ERROR 406"
+        )
 
     def test_api_sqrt(self):
         url = f"{BASE_URL_MOCK}/calc/sqrt/64"
