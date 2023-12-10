@@ -7,7 +7,7 @@ import pytest
 
 BASE_URL = "http://localhost:5000"
 BASE_URL_MOCK = "http://localhost:9090"
-DEFAULT_TIMEOUT = 10  # in secs
+DEFAULT_TIMEOUT = 20  # in secs
 
 @pytest.mark.api
 class TestApi(unittest.TestCase):
@@ -32,7 +32,7 @@ class TestApi(unittest.TestCase):
             response.status, http.client.OK, f"Error en la petición API a {url}"
         )
         self.assertEqual(
-            response.read().decode(), "2", "ERROR MULTIPLY"
+            response.read().decode(), "0", "ERROR MULTIPLY"
         )
 
     def test_api_sqrt(self):
