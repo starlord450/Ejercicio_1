@@ -17,6 +17,7 @@ class TestApi(unittest.TestCase):
         self.assertTrue(len(BASE_URL) > 8, "URL no configurada")
 
     def test_api_add(self):
+        global DEFAULT_TIMEOU
         url = f"{BASE_URL}/calc/add/1/2"
 
         start_time = time.time()
