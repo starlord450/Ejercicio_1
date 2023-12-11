@@ -4,7 +4,6 @@ pipeline{
     }
     agent none
     stages{
-
         stage('Get Code'){
             agent any
             steps{
@@ -30,6 +29,10 @@ pipeline{
                }
             }
         }
+        
+        // Unit y Rest en paralelo
+        stage('Paralelo'){
+            parallel{
         stage('Unit'){
             agent{label 'esclavo-1'}
             steps{
@@ -48,12 +51,14 @@ pipeline{
                 }   
             }
         }
+
         stage('Rest'){
             agent{label 'esclavo-2'}
             steps{
                 script{
                     unstash 'config'
                     catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE'){
+
                         bat '''
                             set PYTHONPATH=%WORKSPACE%
                             set FLASK_APP=app\\api.py
@@ -66,11 +71,14 @@ pipeline{
                             hostname
                             hostname
                         '''
+                        
                         }
                     }    
                 }
             }
-            
+            }
+        }
+        
         stage('Results'){
             agent any
             steps{
